@@ -32,6 +32,8 @@ if uploaded_file is not None:
             for sheet_name, sheet_data in df.items():
                 # Get the filename from the first cell of the sheet
                 filename = sheet_data.iloc[0, 0]
+                # Add sheet name to filename to avoid overwriting
+                filename = f"{filename}_{sheet_name}"
                 csv_data = sheet_data.to_csv(index=False)
                 csv_path = os.path.join(output_dir, f"{filename}.csv")
                 with open(csv_path, "w") as f:
@@ -46,6 +48,8 @@ if uploaded_file is not None:
             for sheet_name, sheet_data in df.items():
                 # Get the filename from the first cell of the sheet
                 filename = sheet_data.iloc[0, 0]
+                # Add sheet name to filename to avoid overwriting
+                filename = f"{filename}_{sheet_name}"
                 json_data = sheet_data.to_json(orient="records")
                 json_path = os.path.join(output_dir, f"{filename}.json")
                 with open(json_path, "w") as f:
