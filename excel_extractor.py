@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import os
 
 st.title("Excel Data Extractor")
 
@@ -23,20 +24,30 @@ if uploaded_file is not None:
         st.write("## Download Options:")
         download_format = st.selectbox("Choose download format", ["CSV", "JSON"])
         if download_format == "CSV":
+            # Create output directory if it doesn't exist
+            output_dir = "output"
+            os.makedirs(output_dir, exist_ok=True)
+
             # Iterate through each sheet and download as CSV
             for sheet_name, sheet_data in df.items():
+                # Get the filename from the first cell of the sheet
+                filename = sheet_data.iloc[0, 0]
                 csv_data = sheet_data.to_csv(index=False)
-                st.download_button(
-                    label=f"Download {sheet_name} as CSV",
-                    data=csv_data,
-                    file_name=f"{sheet_name}_extracted_data.csv",
-                    mime="text/csv",
-                )
+                csv_path = os.path.join(output_dir, f"{filename}.csv")
+                with open(csv_path, "w") as f:
+                    f.write(csv_data)
+                st.success(f"Saved {sheet_name} as CSV to {csv_path}")
         elif download_format == "JSON":
-            json_data = df.to_json(orient="records")
-            st.download_button(
-                label="Download as JSON",
-                data=json_data,
-                file_name="extracted_data.json",
-                mime="application/json",
-            )
+            # Create output directory if it doesn't exist
+            output_dir = "output"
+            os.makedirs(output_dir, exist_ok=True)
+
+            # Iterate through each sheet and download as JSON
+            for sheet_name, sheet_data in df.items():
+                # Get the filename from the first cell of the sheet
+                filename = sheet_data.iloc[0, 0]
+                json_data = sheet_data.to_json(orient="records")
+                json_path = os.path.join(output_dir, f"{filename}.json")
+                with open(json_path, "w") as f:
+                    f.write(json_data)
+                st.success(f"Saved {sheet_name} as JSON to {json_path}")
