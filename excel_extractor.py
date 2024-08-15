@@ -23,13 +23,15 @@ if uploaded_file is not None:
         st.write("## Download Options:")
         download_format = st.selectbox("Choose download format", ["CSV", "JSON"])
         if download_format == "CSV":
-            csv_data = df.to_csv(index=False)
-            st.download_button(
-                label="Download as CSV",
-                data=csv_data,
-                file_name="extracted_data.csv",
-                mime="text/csv",
-            )
+            # Iterate through each sheet and download as CSV
+            for sheet_name, sheet_data in df.items():
+                csv_data = sheet_data.to_csv(index=False)
+                st.download_button(
+                    label=f"Download {sheet_name} as CSV",
+                    data=csv_data,
+                    file_name=f"{sheet_name}_extracted_data.csv",
+                    mime="text/csv",
+                )
         elif download_format == "JSON":
             json_data = df.to_json(orient="records")
             st.download_button(
